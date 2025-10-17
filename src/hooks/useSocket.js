@@ -13,7 +13,7 @@ const useSocket = ({ activeChatId, setActiveChatId, setChats, chats }) => {
     setSocket(newSocket);
 
     chats.forEach((chat) => {
-      newSocket.emit('joinChat', chat._id);
+      newSocket.emit('joinChat', chat?._id);
     });
 
     newSocket.on('receiveMessage', (message) => {
@@ -41,7 +41,7 @@ const useSocket = ({ activeChatId, setActiveChatId, setChats, chats }) => {
     });
 
     return () => newSocket.disconnect();
-  }, [chats]);
+  }, [activeChatId, chats]);
 
   const joinChat = useCallback(
     async (chatId) => {
