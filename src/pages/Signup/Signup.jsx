@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,10 +6,11 @@ import PasswordInput from '../../components/PasswordInput';
 import FormItem from '../../components/FormItem';
 import { Container, Card, Title, Input, Button, Text } from './Signup.styles';
 import { signupUser } from '../../api/auth';
+import { useMessage } from '../../context/MessageContext';
 
 const Signup = ({ setUser }) => {
   const navigate = useNavigate();
-  const [serverError, setServerError] = useState('');
+  const message = useMessage();
 
   const {
     register,
@@ -22,7 +22,6 @@ const Signup = ({ setUser }) => {
 
   const onSubmit = async (data) => {
     try {
-      setServerError('');
       const result = await signupUser({
         username: data.username,
         password: data.password,
@@ -32,7 +31,7 @@ const Signup = ({ setUser }) => {
       setUser(result.user);
       navigate('/chat');
     } catch (err) {
-      setServerError(err.message);
+      message.error(err.message);
     }
   };
 
@@ -41,7 +40,7 @@ const Signup = ({ setUser }) => {
       <Card>
         <Title>Create Account</Title>
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <FormItem label="Username" error={errors.username}>
+          <FormItem label="Username" required error={errors.username}>
             <Input
               type="text"
               placeholder="Enter your username"
@@ -50,7 +49,7 @@ const Signup = ({ setUser }) => {
             />
           </FormItem>
 
-          <FormItem label="Password" error={errors.password}>
+          <FormItem label="Password" required error={errors.password}>
             <PasswordInput
               name="password"
               register={register}
@@ -59,7 +58,11 @@ const Signup = ({ setUser }) => {
             />
           </FormItem>
 
-          <FormItem label="Confirm Password" error={errors.confirmPassword}>
+          <FormItem
+            label="Confirm Password"
+            required
+            error={errors.confirmPassword}
+          >
             <PasswordInput
               name="confirmPassword"
               register={register}
@@ -67,13 +70,6 @@ const Signup = ({ setUser }) => {
               placeholder="Confirm Password"
             />
           </FormItem>
-
-          {serverError && (
-            <p style={{ color: 'red', marginBottom: '0.5rem' }}>
-              {serverError}
-            </p>
-          )}
-
           <Button type="submit">Sign Up</Button>
         </form>
 

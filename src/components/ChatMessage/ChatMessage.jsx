@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -19,7 +18,7 @@ const ChatMessage = ({ msg }) => {
             style={dracula}
             language={match[1]}
             PreTag="div"
-            wrapLines={true} // Wrap long code lines
+            wrapLines={true}
             {...props}
           >
             {String(children).replace(/\n$/, '')}
@@ -32,7 +31,7 @@ const ChatMessage = ({ msg }) => {
             background: '#e0e0e0',
             padding: '2px 4px',
             borderRadius: '4px',
-            wordBreak: 'break-word', // Wrap inline code
+            wordBreak: 'break-word',
           }}
           {...props}
         >

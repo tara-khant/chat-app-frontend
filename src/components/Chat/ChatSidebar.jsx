@@ -1,4 +1,3 @@
-import React from 'react';
 import { PlusOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import {
   Sidebar,
@@ -27,10 +26,10 @@ const ChatSidebar = ({
     <ChatList>
       {chats.map((chat) => (
         <ChatItem
-          key={chat._id}
-          onClick={() => onSelectChat(chat._id)}
+          key={chat?._id}
+          onClick={() => onSelectChat(chat?._id)}
           style={{
-            fontWeight: activeChatId === chat._id ? 'bold' : 'normal',
+            fontWeight: activeChatId === chat?._id ? 'bold' : 'normal',
             cursor: 'pointer',
           }}
         >

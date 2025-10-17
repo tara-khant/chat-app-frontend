@@ -34,7 +34,7 @@ export const ModalBody = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  max-height: 300px; /* makes it scrollable if too many users */
+  max-height: 300px;
   overflow-y: auto;
   margin-bottom: 16px;
 `;

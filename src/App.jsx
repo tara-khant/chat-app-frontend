@@ -11,7 +11,6 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Chat from './pages/Chat';
 import ProtectedRoute from './routes/ProtectedRoute';
-import 'antd/dist/reset.css';
 
 function App() {
   const [user, setUser] = useState(null);

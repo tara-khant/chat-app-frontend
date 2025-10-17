@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { message as antdMessage, Modal } from 'antd';
 import { ChatSidebar, ChatArea } from '../../components/Chat';
 import { getAllUsers } from '../../api/user';
 import { createChat } from '../../api/chat';
@@ -8,8 +7,11 @@ import useChats from '../../hooks/useChats';
 import { Container } from './Chat.styles';
 import NewChatModal from '../../components/NewChatModal';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from 'antd';
+import { useMessage } from '../../context/MessageContext';
 
 const Chat = ({ user }) => {
+  const message = useMessage();
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
@@ -20,6 +22,7 @@ const Chat = ({ user }) => {
     activeChatId,
     setActiveChatId,
     setChats,
+    chats,
   });
 
   // Fetch all users
@@ -34,14 +37,14 @@ const Chat = ({ user }) => {
       await refreshChats();
       setActiveChatId(newChat._id);
     } catch {
-      antdMessage.error('Failed to create chat');
+      message.error('Failed to create chat');
     }
   };
 
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    antdMessage.success('Logged out successfully');
+    message.success('Logged out successfully');
     navigate('/login');
   };
 
@@ -60,9 +63,11 @@ const Chat = ({ user }) => {
         socket={socket}
         user={user}
         activeChatId={activeChatId}
+        setActiveChatId={setActiveChatId}
         messages={messages}
         onSendMessage={sendMessage}
         joinChat={joinChat}
+        setChats={setChats}
       />
 
       <NewChatModal

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,10 +6,11 @@ import PasswordInput from '../../components/PasswordInput';
 import FormItem from '../../components/FormItem';
 import { Container, Card, Title, Input, Button, Text } from './Login.styles';
 import { loginUser } from '../../api/auth';
+import { useMessage } from '../../context/MessageContext';
 
 const Login = ({ setUser }) => {
+  const message = useMessage();
   const navigate = useNavigate();
-  const [serverError, setServerError] = useState('');
 
   const {
     register,
@@ -22,7 +22,6 @@ const Login = ({ setUser }) => {
 
   const onSubmit = async (data) => {
     try {
-      setServerError('');
       const result = await loginUser({
         username: data.username,
         password: data.password,
@@ -33,7 +32,7 @@ const Login = ({ setUser }) => {
       navigate('/chat');
       localStorage.setItem('user', JSON.stringify(result.user));
     } catch (err) {
-      setServerError(err.message);
+      message.error(err.message);
     }
   };
 
@@ -43,7 +42,7 @@ const Login = ({ setUser }) => {
         <Title>Login</Title>
 
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <FormItem label="Username" error={errors.username}>
+          <FormItem label="Username" required error={errors.username}>
             <Input
               type="text"
               placeholder="Enter your username"
@@ -52,7 +51,7 @@ const Login = ({ setUser }) => {
             />
           </FormItem>
 
-          <FormItem label="Password" error={errors.password}>
+          <FormItem label="Password" required error={errors.password}>
             <PasswordInput
               name="password"
               register={register}
@@ -60,16 +59,8 @@ const Login = ({ setUser }) => {
               placeholder="Enter your password"
             />
           </FormItem>
-
-          {serverError && (
-            <p style={{ color: 'red', marginBottom: '0.5rem' }}>
-              {serverError}
-            </p>
-          )}
-
           <Button type="submit">Login</Button>
         </form>
-
         <Text>
           Don’t have an account? <Link to="/signup">Sign up</Link>
         </Text>

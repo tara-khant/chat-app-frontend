@@ -32,13 +32,10 @@ axiosInstance.interceptors.response.use(
         // Clear token
         localStorage.removeItem('token');
 
-        // Show Ant Design message
         message.error('Session expired. Please login again.');
 
-        // Optional: redirect to login page
         window.location.href = '/login';
       } else if (error.response.data?.message) {
-        // Show other API error messages
         message.error(error.response.data.message);
       } else {
         message.error('Something went wrong!');

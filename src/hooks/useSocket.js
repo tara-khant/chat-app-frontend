@@ -1,67 +1,98 @@
 import { useEffect, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
-import { getMessagesByChat, sendMessage } from '../api/chat';
+import { createChat, getMessagesByChat, sendMessage } from '../api/chat';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
-const useSocket = ({ activeChatId, setActiveChatId, setChats }) => {
+const useSocket = ({ activeChatId, setActiveChatId, setChats, chats }) => {
+  const [messagesMap, setMessagesMap] = useState({});
   const [socket, setSocket] = useState(null);
-  const [messages, setMessages] = useState([]);
 
-  // Initialize socket
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
     setSocket(newSocket);
 
+    chats.forEach((chat) => {
+      newSocket.emit('joinChat', chat._id);
+    });
+
     newSocket.on('receiveMessage', (message) => {
-      if (message.chatId === activeChatId) {
-        setMessages((prev) => [...prev, message]);
+      const { chatId } = message;
 
-        setChats((prevChats) => {
-          const index = prevChats.findIndex((c) => c._id === message.chat._id);
+      setMessagesMap((prev) => {
+        const chatMessages = prev[chatId] || [];
+        return { ...prev, [chatId]: [...chatMessages, message] };
+      });
 
-          if (index !== -1) {
-            const updatedChats = [...prevChats];
-            updatedChats[index] = message.chat;
-            return updatedChats;
-          } else {
-            return [...prevChats, message.chat];
-          }
-        });
+      setChats((prevChats) => {
+        const index = prevChats.findIndex((c) => c._id === message.chatId);
+        if (index !== -1) {
+          const updatedChats = [...prevChats];
+          updatedChats[index] = message.chat;
+          return updatedChats;
+        } else {
+          return [...prevChats, message.chat];
+        }
+      });
 
-        setActiveChatId(message.chat._id);
+      if (chatId === activeChatId) {
+        setActiveChatId(chatId);
       }
     });
 
     return () => newSocket.disconnect();
-  }, [activeChatId]);
+  }, [chats]);
 
-  // Join chat
   const joinChat = useCallback(
     async (chatId) => {
       if (!socket) return;
+
       socket.emit('joinChat', chatId);
       const chatInfo = await getMessagesByChat(chatId);
-      setMessages(chatInfo?.messages || []);
+
+      setMessagesMap((prev) => ({
+        ...prev,
+        [chatId]: chatInfo?.messages || [],
+      }));
     },
     [socket]
   );
 
-  // Send message
   const sendMessageHandler = async ({ text, user, chatId, setIsAiTyping }) => {
+    if (!text.trim() || !socket) return;
+
+    let currentChatId = chatId;
+
+    if (!currentChatId) {
+      const newChat = await createChat([user.id]);
+      currentChatId = newChat._id;
+
+      setChats((prev) => [...prev, newChat]);
+      setActiveChatId(newChat._id);
+
+      socket.emit('joinChat', newChat._id);
+    }
+
     const msg = {
       senderId: user.id,
       text,
-      chatId,
+      chatId: currentChatId,
       timestamp: new Date().toISOString(),
       type: 'user',
     };
-    setMessages((prev) => [...prev, msg]);
 
-    await sendMessage(chatId, user.id, text);
-    socket.emit('sendMessage', { chatId, message: msg });
-    setIsAiTyping(false);
+    setMessagesMap((prev) => {
+      const chatMessages = prev[currentChatId] || [];
+      return { ...prev, [currentChatId]: [...chatMessages, msg] };
+    });
+
+    await sendMessage(currentChatId, user.id, text);
+    socket.emit('sendMessage', { chatId: currentChatId, message: msg });
+
+    if (setIsAiTyping) setIsAiTyping(false);
   };
+
+  const messages = activeChatId ? messagesMap[activeChatId] || [] : [];
 
   return { socket, messages, sendMessage: sendMessageHandler, joinChat };
 };

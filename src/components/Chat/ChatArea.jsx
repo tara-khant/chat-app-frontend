@@ -15,6 +15,8 @@ const ChatArea = ({
   messages,
   onSendMessage,
   joinChat,
+  setActiveChatId,
+  setChats,
 }) => {
   const [isAiTyping, setIsAiTyping] = useState(false);
 
@@ -45,6 +47,8 @@ const ChatArea = ({
           user={user}
           activeChatId={activeChatId}
           setIsAiTyping={setIsAiTyping}
+          setActiveChatId={setActiveChatId}
+          setChats={setChats}
         />
       </InputArea>
     </ChatContainer>

@@ -12,7 +12,7 @@ export const Card = styled.div`
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  width: 340px;
+  width: 400px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
@@ -37,6 +37,7 @@ export const Button = styled.button`
   padding: 10px;
   border-radius: 8px;
   font-weight: 600;
+  cursor: pointer;
 
   &:hover {
     background: #40739e;

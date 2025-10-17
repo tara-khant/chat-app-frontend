@@ -3,11 +3,17 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   height: 100vh;
+  width: 100vw;
+  overflow: hidden;
   background-color: #ffff;
 `;
 
 export const Sidebar = styled.div`
-  width: 300px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
   background-color: #f3f4f6;
   border-right: 1px solid #e5e7eb;
   padding: 16px;

@@ -46,6 +46,7 @@ export const ChatArea = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #fffff;
+  overflow: hidden;
 `;
 
 export const MessagesContainer = styled.div`
@@ -67,6 +68,15 @@ export const InputArea = styled.div`
   border-top: 1px solid #e5e7eb;
 `;
 
+export const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background-color: #fff;
+  width: 80%;
+`;
+
 export const InputField = styled.input`
   flex: 1;
   padding: 8px 12px;
@@ -77,13 +87,26 @@ export const InputField = styled.input`
 `;
 
 export const SendButton = styled.button`
-  background-color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
   color: white;
-  padding: 8px 16px;
   border: none;
-  border-radius: 0 6px 6px 0;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
-  font-weight: bold;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const NewChatButton = styled.button`

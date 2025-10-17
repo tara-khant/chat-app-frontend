@@ -16,7 +16,7 @@ const PasswordInput = ({ register, name, placeholder }) => {
           {...register(name)}
         />
         <Icon onClick={toggleShowPassword}>
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
+          {showPassword ? <FaEye /> : <FaEyeSlash />}
         </Icon>
       </InputGroup>
     </div>
